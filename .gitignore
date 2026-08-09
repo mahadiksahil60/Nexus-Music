@@ -1,0 +1,9 @@
+# Build artifacts
+*.exe
+
+# Local bundled runtime
+/bin/
+
+# Go build output
+build/
+dist/
