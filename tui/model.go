@@ -58,9 +58,15 @@ func NewModel() Model {
 	ti.Prompt = "Search: "
 	ti.Focus()
 
+	player := youtube.NewPlayer()
+
+	if err := player.Start(); err != nil {
+		fmt.Println("Failed to start MPV:", err)
+	}
+
 	return Model{
 		textInput: ti,
-		player:    youtube.NewPlayer(),
+		player:    player,
 		searching: true,
 	}
 }

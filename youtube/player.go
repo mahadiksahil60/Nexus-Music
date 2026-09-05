@@ -27,37 +27,69 @@ type PlaybackState struct {
 	Paused   bool
 }
 
-func (p *Player) Play(url string) error {
-	if p.cmd != nil && p.cmd.Process != nil {
-		_ = p.cmd.Process.Kill()
-		p.cmd = nil
-	}
+// func (p *Player) Play(url string) error {
+// 	return p.sendCommand(map[string]interface{}{
+// 		"command": []interface{}{
+// 			"loadfile",
+// 			url,
+// 			"replace",
+// 		},
+// 	})
+// }
 
-	// NOTE : For local development
-	// p.cmd = exec.Command(
-	// 	mpvPath,
-	// 	"--no-video",
-	// 	"--input-ipc-server="+mpvPipe,
-	// 	url,
-	// )
-
-	// p.cmd = exec.Command(
-	// 	paths.MPV(),
-	// 	"--no-video",
-	// 	"--input-ipc-server="+mpvPipe,
-	// 	url,
-	// )
-
+func (p *Player) Start() error {
 	p.cmd = exec.Command(
 		paths.MPV(),
 		"--no-video",
+		"--idle=yes",
 		"--input-ipc-server="+mpvPipe,
 		"--script-opts=ytdl_hook-ytdl_path="+paths.YTDLP(),
-		url,
 	)
 
 	return p.cmd.Start()
 }
+
+func (p *Player) Play(url string) error {
+	_, err := p.sendCommand([]interface{}{
+		"loadfile",
+		url,
+		"replace",
+	})
+
+	return err
+}
+
+// func (p *Player) Play(url string) error {
+// 	if p.cmd != nil && p.cmd.Process != nil {
+// 		_ = p.cmd.Process.Kill()
+// 		p.cmd = nil
+// 	}
+
+// 	// NOTE : For local development
+// 	// p.cmd = exec.Command(
+// 	// 	mpvPath,
+// 	// 	"--no-video",
+// 	// 	"--input-ipc-server="+mpvPipe,
+// 	// 	url,
+// 	// )
+
+// 	// p.cmd = exec.Command(
+// 	// 	paths.MPV(),
+// 	// 	"--no-video",
+// 	// 	"--input-ipc-server="+mpvPipe,
+// 	// 	url,
+// 	// )
+
+// 	p.cmd = exec.Command(
+// 		paths.MPV(),
+// 		"--no-video",
+// 		"--input-ipc-server="+mpvPipe,
+// 		"--script-opts=ytdl_hook-ytdl_path="+paths.YTDLP(),
+// 		url,
+// 	)
+
+// 	return p.cmd.Start()
+// }
 
 func (p *Player) Stop() error {
 	if p.cmd == nil || p.cmd.Process == nil {
