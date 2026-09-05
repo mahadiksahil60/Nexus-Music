@@ -41,10 +41,18 @@ func (p *Player) Play(url string) error {
 	// 	url,
 	// )
 
+	// p.cmd = exec.Command(
+	// 	paths.MPV(),
+	// 	"--no-video",
+	// 	"--input-ipc-server="+mpvPipe,
+	// 	url,
+	// )
+
 	p.cmd = exec.Command(
 		paths.MPV(),
 		"--no-video",
 		"--input-ipc-server="+mpvPipe,
+		"--script-opts=ytdl_hook-ytdl_path="+paths.YTDLP(),
 		url,
 	)
 

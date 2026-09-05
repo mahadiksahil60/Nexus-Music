@@ -43,6 +43,9 @@ type Model struct {
 	// fast forwand
 	lastArrow     string
 	lastArrowTime time.Time
+
+	// repeat playback
+	playback_song bool
 }
 
 type searchResultMsg struct {
@@ -161,20 +164,32 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case "/":
 			m.searching = true
+			m.textInput.SetValue("")
 			m.textInput.Focus()
 
 			return m, textinput.Blink
 
 		case "up":
-			if m.cursor > 0 {
-				m.cursor--
+			if len(m.songs) == 0 {
+				return m, nil
+			}
+
+			m.cursor--
+
+			if m.cursor < 0 {
+				m.cursor = len(m.songs) - 1
 			}
 
 		case "down":
-			if m.cursor < len(m.songs)-1 {
-				m.cursor++
+			if len(m.songs) == 0 {
+				return m, nil
 			}
 
+			m.cursor++
+
+			if m.cursor >= len(m.songs) {
+				m.cursor = 0
+			}
 		case "enter":
 			if len(m.songs) == 0 {
 				return m, nil
@@ -191,6 +206,13 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.currentTime = 0
 			m.duration = 0
 			m.paused = false
+
+		case "p":
+			m.playback_song = !m.playback_song
+			for m.playback_song {
+
+			}
+
 		case "left":
 			if m.lastArrow == "left" &&
 				time.Since(m.lastArrowTime) < 400*time.Millisecond {

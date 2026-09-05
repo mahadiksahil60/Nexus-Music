@@ -123,6 +123,11 @@ func (m Model) renderPlayer() string {
 		frame = "────────"
 	}
 
+	if m.playback_song {
+		b.WriteString("  ")
+		b.WriteString("On repeat 🔁")
+	}
+
 	b.WriteString(
 		activeStyle.Render(
 			"▶ " + truncateText(m.currentlyPlaying, m.width-20),
@@ -200,7 +205,7 @@ func (m Model) renderCommands() string {
 
 	credit := activeStyle.Render("◈") + dimStyle.Render(" Forged by Sahil Mahadik 👽")
 
-	return commands + "    " + credit
+	return commands + "\n\n" + credit
 }
 
 func truncateText(text string, maxWidth int) string {
